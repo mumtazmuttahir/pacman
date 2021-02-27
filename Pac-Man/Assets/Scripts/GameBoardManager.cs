@@ -18,7 +18,8 @@ public class GameBoardManager : MonoBehaviour
         foreach (GameObject obj in objects) {
             Vector2 objPos = obj.transform.position;
 
-            if (obj.gameObject.name != "Pacman") {
+            if (obj.gameObject.name != "PacMan") {
+                Debug.Log ("Object Name = " + obj.gameObject.name);
                 gameBoard[(int)objPos.x, (int)objPos.y] = obj;
             }
         }

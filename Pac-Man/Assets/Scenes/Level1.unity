@@ -368,13 +368,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: PacMan
       objectReference: {fileID: 0}
+    - target: {fileID: 1792562961068058, guid: b08ac3ad30ff0499aa4a5042fe2f12da, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4521929160499986, guid: b08ac3ad30ff0499aa4a5042fe2f12da, type: 3}
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4521929160499986, guid: b08ac3ad30ff0499aa4a5042fe2f12da, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 4521929160499986, guid: b08ac3ad30ff0499aa4a5042fe2f12da, type: 3}
       propertyPath: m_LocalPosition.y
