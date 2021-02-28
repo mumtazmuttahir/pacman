@@ -19,7 +19,6 @@ public class GameBoardManager : MonoBehaviour
             Vector2 objPos = obj.transform.position;
 
             if (obj.gameObject.name != "PacMan") {
-                Debug.Log ("Object Name = " + obj.gameObject.name);
                 gameBoard[(int)objPos.x, (int)objPos.y] = obj;
             }
         }

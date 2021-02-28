@@ -7,11 +7,13 @@ public class PacMan : MonoBehaviour {
 	#region private_variables
 	[SerializeField]
 	private float speed = 4.0f;
-	private Node currentNodeOnWhichPacmanIsStanding;
+	private Vector2 direction = Vector2.zero;
+	private Vector2 nextDirection;
+	private Node currentNodeOnWhichPacmanIsStanding, previousNode, targetNode;
 	#endregion
 
 
-	private Vector2 direction = Vector2.zero;
+	
 
 	// Use this for initialization
 	void Start () {
@@ -19,50 +21,80 @@ public class PacMan : MonoBehaviour {
 		//Debug.Log ("this.transform.localPosition is = " +this.transform.localPosition);
 		if (node != null) {
 			currentNodeOnWhichPacmanIsStanding = node;
-			Debug.Log ("Node is = " + node.name);
 		}
+
+		//Start the PacMan movement
+		direction = Vector2.left;
+		changePacmanPosition (direction);
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		CheckInput ();
+		checkPacmanDirectionInput ();
 
-		//Move ();
+		movePacman ();
 
-		UpdateOrientation ();
+		updateOrientation ();
 	}
 
-	void CheckInput () {
+	private void checkPacmanDirectionInput () {
 
 		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 
-			direction = Vector2.left;
-			moveToNode(direction);
+			changePacmanPosition (Vector2.left);
 
 		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
 
-			direction = Vector2.right;
-			moveToNode(direction);
+			changePacmanPosition (Vector2.right);
 
 		} else if (Input.GetKeyDown (KeyCode.UpArrow)) {
 
-			direction = Vector2.up;
-			moveToNode(direction);
+			changePacmanPosition (Vector2.up);
 
 		} else if (Input.GetKeyDown (KeyCode.DownArrow)) {
 
-			direction = Vector2.down;
-			moveToNode(direction);
+			changePacmanPosition (Vector2.down);
 		}
 	}
 
-	void Move () {
+	private void movePacman () {
 
-		transform.localPosition += (Vector3)(direction * speed) * Time.deltaTime;
+		if (targetNode != currentNodeOnWhichPacmanIsStanding && targetNode != null ) {
+			if (isPacmanOverShotTheTarget()) {
+				currentNodeOnWhichPacmanIsStanding = targetNode;
+				Debug.Log ("Pacman Position = " + this.gameObject.transform.localPosition);
+				Debug.Log ("current Node Position = " + currentNodeOnWhichPacmanIsStanding.transform.position);
+				this.gameObject.transform.localPosition = (Vector2)currentNodeOnWhichPacmanIsStanding.transform.position;
+
+				Node moveToNextNode = pacmanCanMove (nextDirection);
+
+				if (moveToNextNode != null) {
+					direction = nextDirection;
+				}
+
+				if (moveToNextNode == null) {
+					moveToNextNode = pacmanCanMove (direction);
+				}
+
+				if (moveToNextNode != null) {
+					targetNode = moveToNextNode;
+					previousNode = currentNodeOnWhichPacmanIsStanding;
+					currentNodeOnWhichPacmanIsStanding = null;
+				} else {
+					direction = Vector2.zero;
+				}
+
+			} else {
+
+				transform.localPosition += (Vector3)(direction * speed) * Time.deltaTime;
+			
+			}
+		}
+
 	}
 
-	void UpdateOrientation () {
+	private void updateOrientation () {
 
 		if (direction == Vector2.left) {
 
@@ -86,7 +118,7 @@ public class PacMan : MonoBehaviour {
 		}
 	}
 
-	Node getNodeAtPositionOfPacman (Vector2 _pacmanPos) {
+	private Node getNodeAtPositionOfPacman (Vector2 _pacmanPos) {
 		GameObject pellet = GameObject
 								.Find("GameManager")
 								.GetComponent<GameBoardManager>()
@@ -99,7 +131,24 @@ public class PacMan : MonoBehaviour {
 		}
 	}
 
-	Node pacmanCanMove (Vector2 _pacmanPos) {
+	private void changePacmanPosition (Vector2 _dir) {
+		if (_dir != direction){
+			nextDirection = _dir;
+		}
+
+		if (currentNodeOnWhichPacmanIsStanding != null) {
+			Node moveToNextNode = pacmanCanMove (_dir);
+
+			if (moveToNextNode != null) {
+				direction = _dir;
+				targetNode = moveToNextNode;
+				previousNode = currentNodeOnWhichPacmanIsStanding;
+				currentNodeOnWhichPacmanIsStanding = null;
+			}
+		}
+	}
+
+	private Node pacmanCanMove (Vector2 _pacmanPos) {
 		Node moveToNextNode = null;
 
 		for (int index = 0; index < currentNodeOnWhichPacmanIsStanding.neighbors.Length; index++) {
@@ -112,7 +161,7 @@ public class PacMan : MonoBehaviour {
 		return moveToNextNode;
 	}
 
-	void moveToNode (Vector2 _nextPos) {
+	private void moveToNode (Vector2 _nextPos) {
 		Node moveToNextNode = pacmanCanMove (_nextPos);
 
 		if (currentNodeOnWhichPacmanIsStanding != null) {
@@ -120,4 +169,18 @@ public class PacMan : MonoBehaviour {
 			currentNodeOnWhichPacmanIsStanding = moveToNextNode;
 		}
 	}
+
+	private float distanceForCurrentNode (Vector2 _targetNodePosition) {
+
+		Vector2 vector = _targetNodePosition - (Vector2)previousNode.transform.position;
+		return vector.sqrMagnitude;
+	}
+
+	private bool isPacmanOverShotTheTarget () {
+		float nodeToTarget = distanceForCurrentNode (targetNode.transform.position);
+		float nodeToPacman = distanceForCurrentNode (this.gameObject.transform.position);
+
+		return nodeToPacman > nodeToTarget;
+	}
+
 }
