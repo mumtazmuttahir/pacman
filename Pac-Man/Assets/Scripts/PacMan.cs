@@ -61,6 +61,14 @@ public class PacMan : MonoBehaviour {
 	private void movePacman () {
 
 		if (targetNode != currentNodeOnWhichPacmanIsStanding && targetNode != null ) {
+
+			if (nextDirection == (direction * (-1))) {
+				direction *= -1;
+				Node tempNode = targetNode;
+				targetNode = previousNode;
+				previousNode = tempNode;
+			}
+
 			if (isPacmanOverShotTheTarget()) {
 				currentNodeOnWhichPacmanIsStanding = targetNode;
 				Debug.Log ("Pacman Position = " + this.gameObject.transform.localPosition);
