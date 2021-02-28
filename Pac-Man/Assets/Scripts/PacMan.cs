@@ -36,6 +36,8 @@ public class PacMan : MonoBehaviour {
 		movePacman ();
 
 		updateOrientation ();
+
+		consumePellet ();
 	}
 
 	private void checkPacmanDirectionInput () {
@@ -212,6 +214,35 @@ public class PacMan : MonoBehaviour {
 		}
 
 		return null;
+	}
+
+	private GameObject getTileAtPacmanPosition (Vector2 _pacmanPosition) {
+		int tilePositionX = Mathf.RoundToInt (_pacmanPosition.x);
+		int tilePositionY = Mathf.RoundToInt (_pacmanPosition.y);
+
+		GameObject tile = GameObject
+							.Find("GameManager")
+							.GetComponent<GameBoardManager>()
+							.gameBoard[(int)_pacmanPosition.x,(int)_pacmanPosition.y];
+
+		if (tile != null) {
+			return tile;
+		}
+
+		return null;
+	}
+
+	private void consumePellet () {
+		GameObject pellet = getTileAtPacmanPosition (this.gameObject.transform.position);
+		if (pellet != null) {
+			Tile tile = pellet.GetComponent<Tile>();
+			if (tile != null) {
+				if (!tile.isPelletConsumed && (tile.isPellet || tile.isSuperPellet)) {
+					pellet.GetComponent<SpriteRenderer>().enabled = false;
+					tile.isPelletConsumed = true;
+				}
+			}
+		}
 	}
 
 }

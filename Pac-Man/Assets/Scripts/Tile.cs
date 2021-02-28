@@ -7,6 +7,9 @@ public class Tile : MonoBehaviour {
 	#region public_variables
 	public bool isPortal;
 	public GameObject receiverPortal;
+	public bool isPellet;
+	public bool isSuperPellet;
+	public bool isPelletConsumed;
 	#endregion
 
 	// Use this for initialization
