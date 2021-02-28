@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour {
 
+	#region public_variables
+	public bool isPortal;
+	public GameObject receiverPortal;
+	#endregion
+
 	// Use this for initialization
 	void Start () {
 		

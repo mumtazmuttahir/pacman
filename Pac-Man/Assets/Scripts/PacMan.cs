@@ -71,9 +71,14 @@ public class PacMan : MonoBehaviour {
 
 			if (isPacmanOverShotTheTarget()) {
 				currentNodeOnWhichPacmanIsStanding = targetNode;
-				Debug.Log ("Pacman Position = " + this.gameObject.transform.localPosition);
-				Debug.Log ("current Node Position = " + currentNodeOnWhichPacmanIsStanding.transform.position);
 				this.gameObject.transform.localPosition = (Vector2)currentNodeOnWhichPacmanIsStanding.transform.position;
+
+				GameObject oppositePortal = getPortal (currentNodeOnWhichPacmanIsStanding.transform.position);
+
+				if (oppositePortal != null) {
+					this.gameObject.transform.localPosition = oppositePortal.transform.position;
+					currentNodeOnWhichPacmanIsStanding = oppositePortal.GetComponent<Node>();
+				}
 
 				Node moveToNextNode = pacmanCanMove (nextDirection);
 
@@ -189,6 +194,24 @@ public class PacMan : MonoBehaviour {
 		float nodeToPacman = distanceForCurrentNode (this.gameObject.transform.position);
 
 		return nodeToPacman > nodeToTarget;
+	}
+
+	private GameObject getPortal (Vector2 _pacmanPosition) {
+		GameObject tile = GameObject
+							.Find("GameManager")
+							.GetComponent<GameBoardManager>()
+							.gameBoard[(int)_pacmanPosition.x,(int)_pacmanPosition.y];
+
+		if (tile != null) {
+			if (tile.GetComponent<Tile>() != null) {
+				if (tile.GetComponent<Tile>().isPortal) {
+					GameObject oppositePortal = tile.GetComponent<Tile>().receiverPortal;
+					return oppositePortal;
+				}
+			}
+		}
+
+		return null;
 	}
 
 }
