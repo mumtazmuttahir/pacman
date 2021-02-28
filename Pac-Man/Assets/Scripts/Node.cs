@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ public class Node : MonoBehaviour {
 		for (int i = 0; i < neighbors.Length; i++) {
 
 			Node neighbor = neighbors [i];
-			Vector2 tempVector = neighbor.transform.position - transform.position;
+			Vector2 tempVector = neighbor.transform.localPosition - transform.localPosition;
 
 			validDirections [i] = tempVector.normalized;
 		}
