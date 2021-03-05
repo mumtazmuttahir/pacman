@@ -11,6 +11,17 @@ public class PacMan : MonoBehaviour {
 	private Vector2 nextDirection;
 	private Node currentNodeOnWhichPacmanIsStanding, previousNode, targetNode;
 	private int pelletsConsumed = 0;
+	private GameObject pellet;
+	private Node initPosition;
+	private bool isChomp1Played = false;
+	private Node pacmanStartPosition;
+	#endregion
+
+	#region public_variables
+	public Vector2 orientation;
+	public AudioSource audiosSource;
+	public AudioClip chomp1, chomp2;
+	public AudioClip moveFX, munchFX, winFX;
 	#endregion
 
 
@@ -18,7 +29,17 @@ public class PacMan : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		//Assigning Pacman speed
+		speed = StaticsAndConstants.PacManSpeed;
+
+		//Audio Source
+		audiosSource = this.GetComponent<AudioSource>();
+
 		Node node = getNodeAtPositionOfPacman(this.transform.localPosition);
+
+		initPosition = node;
+
 		//Debug.Log ("this.transform.localPosition is = " +this.transform.localPosition);
 		if (node != null) {
 			currentNodeOnWhichPacmanIsStanding = node;
@@ -27,6 +48,26 @@ public class PacMan : MonoBehaviour {
 		//Start the PacMan movement
 		direction = Vector2.left;
 		changePacmanPosition (direction);
+	}
+
+	public void RestartPacMan() {
+
+		transform.position = initPosition.transform.position;
+		currentNodeOnWhichPacmanIsStanding = initPosition;
+		direction = Vector2.left;
+		orientation = Vector2.left;
+		nextDirection = Vector2.zero;
+		changePacmanPosition (direction);
+	}
+
+	void PlayChompSfx () {
+		if (isChomp1Played) {
+			audiosSource.PlayOneShot (chomp1);
+			isChomp1Played = false;
+		} else {
+			audiosSource.PlayOneShot (chomp2);
+			isChomp1Played = true;
+		}
 	}
 	
 	// Update is called once per frame
@@ -114,21 +155,25 @@ public class PacMan : MonoBehaviour {
 
 		if (direction == Vector2.left) {
 
+			orientation = Vector2.left;
 			transform.localScale = new Vector3 (-1, 1, 1);
 			transform.localRotation = Quaternion.Euler (0, 0, 0);
 
 		} else if (direction == Vector2.right) {
 
+			orientation = Vector2.right;
 			transform.localScale = new Vector3 (1, 1, 1);
 			transform.localRotation = Quaternion.Euler (0, 0, 0);
 
 		} else if (direction == Vector2.up) {
 
+			orientation = Vector2.up;
 			transform.localScale = new Vector3 (1, 1, 1);
 			transform.localRotation = Quaternion.Euler (0, 0, 90);
 
 		} else if (direction == Vector2.down) {
 
+			orientation = Vector2.down;
 			transform.localScale = new Vector3 (1, 1, 1);
 			transform.localRotation = Quaternion.Euler (0, 0, 270);
 		}
@@ -243,6 +288,15 @@ public class PacMan : MonoBehaviour {
 					tile.isPelletConsumed = true;
 					GameObject.Find("GameManager").GetComponent<GameBoardManager>().score += 1;
 					pelletsConsumed++;
+					PlayChompSfx ();
+
+					if (tile.isSuperPellet) {
+						GameObject[] ghosts = GameObject. FindGameObjectsWithTag("Ghost");
+
+						foreach (GameObject o in ghosts) {
+							o.GetComponent<Ghost>().StartScaredMode();
+						}
+					}
 				}
 			}
 		}

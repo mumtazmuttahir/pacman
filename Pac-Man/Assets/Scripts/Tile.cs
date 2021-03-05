@@ -10,6 +10,8 @@ public class Tile : MonoBehaviour {
 	public bool isPellet;
 	public bool isSuperPellet;
 	public bool isPelletConsumed;
+	public bool isGhostInHouseEntrance;
+	public bool isGhostHouse;
 	#endregion
 
 	// Use this for initialization
