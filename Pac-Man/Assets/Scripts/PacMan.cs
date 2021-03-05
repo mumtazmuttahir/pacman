@@ -21,7 +21,7 @@ public class PacMan : MonoBehaviour {
 	public Vector2 orientation;
 	public AudioSource audiosSource;
 	public AudioClip chomp1, chomp2;
-	public AudioClip moveFX, munchFX, winFX;
+	//public AudioClip moveFX, munchFX, winFX;
 	public bool canMove = true;
 	#endregion
 
@@ -323,7 +323,8 @@ public class PacMan : MonoBehaviour {
 				if (!tile.isPelletConsumed && (tile.isPellet || tile.isSuperPellet)) {
 					pellet.GetComponent<SpriteRenderer>().enabled = false;
 					tile.isPelletConsumed = true;
-					GameObject.Find("GameManager").GetComponent<GameBoardManager>().score += 1;
+					GameObject.Find("GameManager").GetComponent<GameBoardManager>().ScoreChange(1);
+
 					pelletsConsumed++;
 					PlayChompSfx ();
 

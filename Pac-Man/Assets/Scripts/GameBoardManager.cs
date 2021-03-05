@@ -14,7 +14,7 @@ public class GameBoardManager : MonoBehaviour
 
     public int totalPellets = 0;
     public int score = 0;
-    public int pacManLife = 5;
+    public int pacManLife = 3;
 
     public AudioClip backgroundAudioIntro;
     public AudioClip backgroundAudioNormal;
@@ -23,6 +23,9 @@ public class GameBoardManager : MonoBehaviour
 
     public Text PlayerText;
     public Text ReadyText;
+    public Text scoreText;
+    [SerializeField] GameObject [] livesUI;
+    [SerializeField] GameObject gameOverPanal;
     #endregion
 
 
@@ -48,7 +51,8 @@ public class GameBoardManager : MonoBehaviour
                     obj.gameObject.name != "Pellets" &&
                     obj.gameObject.tag != "GhostHome"  &&
                     obj.gameObject.tag != "Ghost" &&
-                    obj.gameObject.tag != "UI_Elements")  {
+                    obj.gameObject.tag != "UI_Elements"&&
+                    obj.gameObject.tag != "GameOverPanal")  {
 
                 if (obj.GetComponent<Tile>() != null) {
 
@@ -117,23 +121,6 @@ public class GameBoardManager : MonoBehaviour
 
     }
 
-    //PacMan respawn
-    public void PacManRespawn() {
-
-        if(pacManLife > 0) {
-            Debug.Log ("Pacman lives left = " + pacManLife);
-
-            pacMan.GetComponent<PacMan>().RestartPacMan();
-            pacManLife--;
-        }
-        else {
-            //gameover
-            pacMan.SetActive(false);
-            //UI message
-        }
-
-    }
-
     public void StartPacManDeath () {
         if (!didStartDeath) {
 
@@ -174,13 +161,26 @@ public class GameBoardManager : MonoBehaviour
         this.gameObject.transform. GetComponent<AudioSource>().clip = backgroundAudioPacManDeath;
         this.gameObject.transform. GetComponent<AudioSource>().Play();
 
-        yield return new WaitForSeconds(_delay);
+           //PacMan respawn
+        pacManLife--;
+        livesUI[pacManLife].GetComponent<Image>().color = new Color(1,1,1,0.3f);
 
+        yield return new WaitForSeconds(_delay);
+        
+        if(pacManLife > 0) {
         StartCoroutine (createRestart (StaticsAndConstants.CreateRestartDelay));
+         }
+        else {
+            //gameover
+            pacMan.SetActive(false);
+            //UI message
+            gameOverPanal.SetActive(true);
+        }
 
     }
 
     IEnumerator createRestart (float _delay) {
+        
         
         PlayerText.GetComponent<Text>().enabled = true;
         ReadyText.GetComponent<Text>().enabled = true;
@@ -190,8 +190,9 @@ public class GameBoardManager : MonoBehaviour
         this.gameObject.transform. GetComponent<AudioSource>().Stop ();
 
         yield return new WaitForSeconds(_delay);
-
         StartCoroutine (createRestartShowObjects (StaticsAndConstants.CreateRestartDelay));
+       
+        
 
     }
 
@@ -205,11 +206,9 @@ public class GameBoardManager : MonoBehaviour
             ghost.GetComponent<SkinnedMeshRenderer>().enabled = true;
             ghost.GetComponent<Ghost>().MoveToStartPosition();
         }
-
-        yield return new WaitForSeconds(_delay);
-
-        Restart ();
-
+          yield return new WaitForSeconds(_delay);
+          Restart ();
+ 
     }
 
     public void Restart () {
@@ -229,4 +228,10 @@ public class GameBoardManager : MonoBehaviour
 
         didStartDeath = false;
     }
+
+    public void ScoreChange (int currentScore) {
+        score=score+currentScore;
+        scoreText.text = ""+ score;
+    }
+ 
 }
