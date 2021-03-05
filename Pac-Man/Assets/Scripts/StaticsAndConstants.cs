@@ -5,6 +5,7 @@ public static class StaticsAndConstants{
     public const float LeastDistance = 100000f;
     public const float ResetToZero = 0.0f;
     public const float ModeChangeTimer = 0.0f;
+    public const float SpeedResetToZero = 0.0f;
 
     //Integers
     public const int ZerothNeighbor = 0;
@@ -20,6 +21,12 @@ public static class StaticsAndConstants{
 
     #region PacMan_File
     public static float PacManSpeed = 6.0f;
+    #endregion
+
+    #region GameBoardManager_File
+    public static float CreateDeathAfterDelay = 2.0f;
+    public static float CreateDeathAnimationDelay = 2.0f;
+    public static float CreateRestartDelay = 1.0f;
     #endregion
     
 }

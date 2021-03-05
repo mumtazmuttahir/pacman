@@ -46,6 +46,7 @@ public class Ghost : MonoBehaviour
     public int blinkingBackToOriginal = 7;
     public Node homeNode;
     public GameBoardManager gameBoardManager;
+    public bool canMove = true;
     #endregion
     // Start is called before the first frame update
     void Start()
@@ -72,21 +73,58 @@ public class Ghost : MonoBehaviour
         modeChangeIteration = StaticsAndConstants.ModeChangeIteration;
 
         Random rnd = new Random();
-        currentGhostReleaseTimer = Random.Range(5, 13);
+        currentGhostReleaseTimer = Random.Range(1, 7);
         
     }
 
-    public void RestartGhost () {
+    public void MoveToStartPosition () {
+
+        if (this.gameObject.name != "redGhost") {
+            isInGhostHouse = true;
+        }
 
         this.gameObject.transform.position = startingPosition.transform.position;
+
+        if (isInGhostHouse) {
+
+            direction = Vector2.up;
+
+        } else {
+
+            direction = Vector2.left;
+            
+        }
+
+
+        updateGhostOrientation ();
+	}
+
+    public void RestartGhost () {
+            Debug.Log("Ghost Name = " + this.gameObject.name);
+
+        canMove = true;
+
+        // if (this.gameObject.name != "redGhost" || 
+        //         this.gameObject.name != "pinkGhost" ||
+        //             this.gameObject.name != "blueGhost" ||
+        //                 this.gameObject.name != "orangeGhost") {
+        //                     this.gameObject.GetComponent<SkinnedMeshRenderer>().enabled = true;
+        // }
+
+        
+
+        currentMode = Mode.Scatter;
+        currentNode = startingPosition;
+
+        moveSpeed = normalMoveSpeed;
+        previousMoveSpeed = StaticsAndConstants.SpeedResetToZero;
+
 
         ghostReleaseTimer = (float)StaticsAndConstants.TimerResetToZero;
         modeChangeIteration = StaticsAndConstants.ModeChangeIteration;
         modeChangeTimer = StaticsAndConstants.ModeChangeTimer;
 
-        if (this.gameObject.name != "redGhost") {
-            isInGhostHouse = true;
-        }
+
 
         if (isInGhostHouse) {
 
@@ -103,22 +141,26 @@ public class Ghost : MonoBehaviour
         previousNode = currentNode;
         updateGhostOrientation ();
 
-
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        //Ghost Mode
-        ModeUpdate ();
-        //Move Ghost
-        Move ();
-        //Release Ghost from the house
-        ReleaseGhost ();
-        //Check ghost collision with Pacman
-        CheckCollision ();
-        //Check ghost if it is in the House
-        checkIfInGhostouse ();
+
+        if (canMove) {
+            //Ghost Mode
+            ModeUpdate ();
+            //Move Ghost
+            Move ();
+            //Release Ghost from the house
+            ReleaseGhost ();
+            //Check ghost collision with Pacman
+            CheckCollision ();
+            //Check ghost if it is in the House
+            checkIfInGhostouse ();
+
+        }
+        
         
     }
 
@@ -481,26 +523,29 @@ public class Ghost : MonoBehaviour
 
     void CheckCollision() {
 
-        ghostRect = new Rect(this.transform.position, this.transform.GetComponent<SkinnedMeshRenderer>().bounds.size/16);
-        pacManRect = new Rect(pacMan.transform.position, pacMan.transform.GetComponent<SpriteRenderer>().bounds.size/16);
+        ghostRect = new Rect(this.transform.position, this.transform.GetComponent<SkinnedMeshRenderer>().bounds.size/4);
+        pacManRect = new Rect(pacMan.transform.position, pacMan.transform.GetComponent<SpriteRenderer>().bounds.size/4);
 
         int overlap = 0;
 
         if(ghostRect.Overlaps(pacManRect))
         {
-            Debug.Log ("Overlaps called");
+            // Debug.Log ("Overlaps called");
 
             if (overlap == 0) {
                 if (currentMode == Mode.Scared) {
                     //Ghost gets consumed and goes back to the House
-                    Debug.Log ("ghost Scared");
+                    // Debug.Log ("ghost Scared");
                     consumeGhost ();
                 } else {
                     //Pacman dies and respawns
-                    Debug.Log ("pacman respawned");
-                                GameObject.Find("GameManager").
-                                    GetComponent<GameBoardManager>().
-                                        PacManRespawn ();
+                    // Debug.Log ("pacman respawned");
+                    if (currentMode != Mode.Scared) {
+                        GameObject.Find("GameManager").
+                                GetComponent<GameBoardManager>().
+                                    StartPacManDeath ();
+                    }
+                    
                 }
             }
 

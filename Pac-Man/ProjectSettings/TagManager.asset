@@ -7,6 +7,7 @@ TagManager:
   - PacMan
   - Ghost
   - GhostHome
+  - UI_Elements
   layers:
   - Default
   - TransparentFX

@@ -22,6 +22,7 @@ public class PacMan : MonoBehaviour {
 	public AudioSource audiosSource;
 	public AudioClip chomp1, chomp2;
 	public AudioClip moveFX, munchFX, winFX;
+	public bool canMove = true;
 	#endregion
 
 
@@ -50,13 +51,22 @@ public class PacMan : MonoBehaviour {
 		changePacmanPosition (direction);
 	}
 
-	public void RestartPacMan() {
+	public void MoveToStartPosition () {
 
 		transform.position = initPosition.transform.position;
-		currentNodeOnWhichPacmanIsStanding = initPosition;
+
 		direction = Vector2.left;
 		orientation = Vector2.left;
+
+	}
+
+	public void RestartPacMan() {
+
+		canMove = true;
+		//this.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+		currentNodeOnWhichPacmanIsStanding = initPosition;
 		nextDirection = Vector2.zero;
+
 		changePacmanPosition (direction);
 	}
 
@@ -73,13 +83,19 @@ public class PacMan : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		checkPacmanDirectionInput ();
+		if (canMove) {
 
-		movePacman ();
+			checkPacmanDirectionInput ();
 
-		updateOrientation ();
+			movePacman ();
 
-		consumePellet ();
+			updateOrientation ();
+
+			consumePellet ();
+
+		}
+
+		
 	}
 
 	private void checkPacmanDirectionInput () {
@@ -99,6 +115,27 @@ public class PacMan : MonoBehaviour {
 		} else if (Input.GetKeyDown (KeyCode.DownArrow)) {
 
 			changePacmanPosition (Vector2.down);
+		}
+	}
+
+	public void MoveUP () {
+		if (canMove) {
+			changePacmanPosition (Vector2.up);
+		}
+	}
+	public void MoveDown () {
+		if (canMove) {
+			changePacmanPosition (Vector2.down);
+		}
+	}
+	public void MoveRight () {
+		if (canMove) {
+			changePacmanPosition (Vector2.right);
+		}
+	}
+	public void MoveLeft () {
+		if (canMove) {
+			changePacmanPosition (Vector2.left);
 		}
 	}
 
