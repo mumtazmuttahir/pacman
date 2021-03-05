@@ -47,6 +47,7 @@ public class Ghost : MonoBehaviour
     public Node homeNode;
     public GameBoardManager gameBoardManager;
     public bool canMove = true;
+    public Material scaredMat, normalMat;
     #endregion
     // Start is called before the first frame update
     void Start()
@@ -263,7 +264,7 @@ public class Ghost : MonoBehaviour
             bgAudio.clip = GameObject.Find("GameManager").transform.GetComponent<GameBoardManager>().backgroundAudioScared;
             bgAudio.Play();
             ChangeMode(Mode.Scared);
-
+             this.GetComponent<SkinnedMeshRenderer>().material = scaredMat;
         }
         
         
@@ -284,7 +285,7 @@ public class Ghost : MonoBehaviour
                 
                 bgAudio.clip = GameObject.Find("GameManager").transform.GetComponent<GameBoardManager>().backgroundAudioNormal;
                 bgAudio.Play();
-                
+                this.GetComponent<SkinnedMeshRenderer>().material = normalMat;
                 scaredModeTimer = StaticsAndConstants.ResetToZero;
                 ChangeMode(previousMode);
 
@@ -400,6 +401,7 @@ public class Ghost : MonoBehaviour
                     GameObject _tile = getTileAtPosition (currentNode.transform.position);
                     if (_tile.transform.GetComponent<Tile>().isGhostInHouseEntrance == true) {
                         
+                        this.GetComponent<SkinnedMeshRenderer>().material = normalMat;
                         if (currentNode.validDirections[i] != Vector2.down) {
 
                             foundNodes[nodeCounter] = currentNode.neighbors[i];
@@ -527,16 +529,19 @@ public class Ghost : MonoBehaviour
         pacManRect = new Rect(pacMan.transform.position, pacMan.transform.GetComponent<SpriteRenderer>().bounds.size/4);
 
         int overlap = 0;
-
         if(ghostRect.Overlaps(pacManRect))
         {
-            // Debug.Log ("Overlaps called");
+             Debug.Log ("Overlaps called"+pacManRect);
 
             if (overlap == 0) {
-                if (currentMode == Mode.Scared) {
+
+                if (currentMode == Mode.Scared || currentMode == Mode.Consumed) {
                     //Ghost gets consumed and goes back to the House
                     // Debug.Log ("ghost Scared");
                     consumeGhost ();
+                    
+                  
+
                 } else {
                     //Pacman dies and respawns
                     // Debug.Log ("pacman respawned");
@@ -559,6 +564,7 @@ public class Ghost : MonoBehaviour
         previousMoveSpeed = moveSpeed;
         moveSpeed = consumedModeMoveSpeed;
         updateGhostOrientation ();
+		GameObject.Find("GameManager").GetComponent<GameBoardManager>().ScoreChange(10);
     }
 
     void checkIfInGhostouse () {
