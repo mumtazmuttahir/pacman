@@ -9,6 +9,7 @@ TagManager:
   - GhostHome
   - UI_Elements
   - GameOverPanal
+  - gameWin
   layers:
   - Default
   - TransparentFX

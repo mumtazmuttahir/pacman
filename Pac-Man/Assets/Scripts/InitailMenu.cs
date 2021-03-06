@@ -12,7 +12,7 @@ public class InitailMenu : MonoBehaviour
     public Button player1Button;
     public Button player2Button;
     public Button playButton;
-    public LoadScene leadScene;
+
 
     public Text playerSelectionIndicator;
     #endregion
@@ -36,14 +36,7 @@ public class InitailMenu : MonoBehaviour
     }
 
     public void GoToGame () {
-        if (isPlayer1Selected) {
-             leadScene.LoadSceneMethod("Level1");
-          //  SceneManager.LoadScene ("Level1") ;
-        } else {
-            Debug.Log ("Loading separate Scene");
-         //   SceneManager.LoadScene ("Level1") ;
-            leadScene.LoadSceneMethod("Level1");
-        }
+        SceneManager.LoadScene(Random.Range(1,2));
     }
   
 }

@@ -20,12 +20,13 @@ public class GameBoardManager : MonoBehaviour
     public AudioClip backgroundAudioNormal;
     public AudioClip backgroundAudioScared;
     public AudioClip backgroundAudioPacManDeath;
+     public AudioClip gameWinFX;
 
     public Text PlayerText;
     public Text ReadyText;
     public Text scoreText;
     [SerializeField] GameObject [] livesUI;
-    [SerializeField] GameObject gameOverPanal;
+    [SerializeField] GameObject gameOverPanal, gameWin;
     #endregion
 
 
@@ -52,7 +53,8 @@ public class GameBoardManager : MonoBehaviour
                     obj.gameObject.tag != "GhostHome"  &&
                     obj.gameObject.tag != "Ghost" &&
                     obj.gameObject.tag != "UI_Elements"&&
-                    obj.gameObject.tag != "GameOverPanal")  {
+                    obj.gameObject.tag != "GameOverPanal"&&
+                    obj.gameObject.tag != "gameWin")  {
 
                 if (obj.GetComponent<Tile>() != null) {
 
@@ -63,7 +65,7 @@ public class GameBoardManager : MonoBehaviour
                     }
 
                 }
-
+              //  print("obj.name"+obj.name);
                 gameBoard[(int)objPos.x, (int)objPos.y] = obj;
             }
         }
@@ -79,7 +81,7 @@ public class GameBoardManager : MonoBehaviour
     }
 
     void StartGame () {
-        pacMan.GetComponent<SpriteRenderer>().enabled = false;
+        pacMan.GetComponent<Renderer>().enabled = false;
         pacMan.GetComponent<PacMan>().canMove = false;
 
         foreach (GameObject ghost in ghosts) {
@@ -93,7 +95,7 @@ public class GameBoardManager : MonoBehaviour
     IEnumerator startGameAfterSomeTime (float _delay) {
         yield return new WaitForSeconds (_delay);
 
-        pacMan.GetComponent<SpriteRenderer>().enabled = true;
+        pacMan.GetComponent<Renderer>().enabled = true;
         foreach (GameObject ghost in ghosts) {
             ghost.GetComponent<SkinnedMeshRenderer>().enabled = true;
         }
@@ -185,7 +187,7 @@ public class GameBoardManager : MonoBehaviour
         PlayerText.GetComponent<Text>().enabled = true;
         ReadyText.GetComponent<Text>().enabled = true;
         
-        pacMan.GetComponent<SpriteRenderer>().enabled = false;
+        pacMan.GetComponent<Renderer>().enabled = false;
 
         this.gameObject.transform. GetComponent<AudioSource>().Stop ();
 
@@ -200,7 +202,7 @@ public class GameBoardManager : MonoBehaviour
 
         PlayerText.GetComponent<Text>().enabled = false;
 
-        pacMan.GetComponent<SpriteRenderer>().enabled = true;
+        pacMan.GetComponent<Renderer>().enabled = true;
         pacMan.GetComponent<PacMan>().MoveToStartPosition();
         foreach (GameObject ghost in ghosts) {
             ghost.GetComponent<SkinnedMeshRenderer>().enabled = true;
@@ -232,6 +234,20 @@ public class GameBoardManager : MonoBehaviour
     public void ScoreChange (int currentScore) {
         score=score+currentScore;
         scoreText.text = ""+ score;
+        if(score>=234)
+        {
+            gameWin.SetActive(true);
+            foreach (GameObject ghost in ghosts) {
+                ghost.GetComponent<Ghost>().canMove = false;
+            }
+
+            pacMan.GetComponent<PacMan>().canMove = false;
+
+            this.gameObject.transform. GetComponent<AudioSource>().clip = gameWinFX;
+            this.gameObject.transform. GetComponent<AudioSource>().Play();
+
+        }
     }
+    
  
 }

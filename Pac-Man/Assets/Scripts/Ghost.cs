@@ -162,7 +162,6 @@ public class Ghost : MonoBehaviour
 
         }
         
-        
     }
 
     void Move() {
@@ -383,7 +382,6 @@ public class Ghost : MonoBehaviour
             targetTile = GetRandomTile();
 
         } else if (currentMode == Mode.Consumed) {
-
             targetTile = ghostHouse.transform.position;
 
         }
@@ -394,7 +392,8 @@ public class Ghost : MonoBehaviour
         Node[] foundNodes = new Node[StaticsAndConstants.FoundNodesCount];
         Vector2[] foundNodePositions = new Vector2[StaticsAndConstants.FoundNodePositionsCount];
         int nodeCounter =0;
-        for(int i = 0; i < currentNode.neighbors.Length; i++) {
+        int tempLenght = (currentMode != Mode.Consumed)? currentNode.neighbors.Length==4?3:currentNode.neighbors.Length:currentNode.neighbors.Length;
+        for(int i = 0; i < tempLenght; i++) {
             if(currentNode.validDirections[i] != (direction * -1)){
                 
                 if (currentMode != Mode.Consumed) {
@@ -445,7 +444,12 @@ public class Ghost : MonoBehaviour
                 }
             }
         }
-
+        if(moveToNode==ghostHouse)
+        {
+            print ("ghostHouse");
+          //  isInGhostHouse = true;
+            this.GetComponent<SkinnedMeshRenderer>().material = normalMat;
+        }
         return moveToNode;
     }
 
@@ -467,8 +471,7 @@ public class Ghost : MonoBehaviour
     Vector2 GetRandomTile () {
 
         int xPos = Random.Range (0, 28);
-        int yPos = Random.Range (0, 36);
-
+        int yPos = Random.Range (0, 36);  
         return new Vector2 (xPos, yPos);
 
     }
@@ -515,6 +518,7 @@ public class Ghost : MonoBehaviour
                 targetTile = new Vector2 (posX,posY);
             }
             else {
+                
                 targetTile = homeNode.transform.position;
             }
  
@@ -526,37 +530,37 @@ public class Ghost : MonoBehaviour
     void CheckCollision() {
 
         ghostRect = new Rect(this.transform.position, this.transform.GetComponent<SkinnedMeshRenderer>().bounds.size/4);
-        pacManRect = new Rect(pacMan.transform.position, pacMan.transform.GetComponent<SpriteRenderer>().bounds.size/4);
+        pacManRect = new Rect(pacMan.transform.position, pacMan.transform.GetComponent<Renderer>().bounds.size/4);
 
         int overlap = 0;
-        if(ghostRect.Overlaps(pacManRect))
-        {
-             Debug.Log ("Overlaps called"+pacManRect);
+        // if(ghostRect.Overlaps(pacManRect))
+        // {
+        //     // Debug.Log ("Overlaps called"+pacManRect);
 
-            if (overlap == 0) {
+        //     if (overlap == 0) {
 
-                if (currentMode == Mode.Scared || currentMode == Mode.Consumed) {
-                    //Ghost gets consumed and goes back to the House
-                    // Debug.Log ("ghost Scared");
-                    consumeGhost ();
+        //         if (currentMode == Mode.Scared || currentMode == Mode.Consumed) {
+        //             //Ghost gets consumed and goes back to the House
+        //             // Debug.Log ("ghost Scared");
+        //             consumeGhost ();
                     
                   
 
-                } else {
-                    //Pacman dies and respawns
-                    // Debug.Log ("pacman respawned");
-                    if (currentMode != Mode.Scared) {
-                        GameObject.Find("GameManager").
-                                GetComponent<GameBoardManager>().
-                                    StartPacManDeath ();
-                    }
+        //         } else {
+        //             //Pacman dies and respawns
+        //             // Debug.Log ("pacman respawned");
+        //             if (currentMode != Mode.Scared) {
+        //                 GameObject.Find("GameManager").
+        //                         GetComponent<GameBoardManager>().
+        //                             StartPacManDeath ();
+        //             }
                     
-                }
-            }
+        //         }
+        //     }
 
-            overlap++;
+        //     overlap++;
             
-        }
+        // }
     }
 
     void consumeGhost () {
@@ -590,6 +594,7 @@ public class Ghost : MonoBehaviour
                             currentMode = Mode.Chase;
 
                             updateGhostOrientation ();
+                            this.GetComponent<SkinnedMeshRenderer>().material = normalMat;
 
                         }
                     }

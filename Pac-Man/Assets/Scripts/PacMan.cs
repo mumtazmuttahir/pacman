@@ -317,15 +317,19 @@ public class PacMan : MonoBehaviour {
 
 	private void consumePellet () {
 		GameObject pellet = getTileAtPacmanPosition (this.gameObject.transform.position);
-		if (pellet != null) {
+		
+		if (pellet != null ) {
+		
 			Tile tile = pellet.GetComponent<Tile>();
 			if (tile != null) {
 				if (!tile.isPelletConsumed && (tile.isPellet || tile.isSuperPellet)) {
+
 					pellet.GetComponent<SpriteRenderer>().enabled = false;
 					tile.isPelletConsumed = true;
 					GameObject.Find("GameManager").GetComponent<GameBoardManager>().ScoreChange(1);
 
 					pelletsConsumed++;
+
 					PlayChompSfx ();
 
 					if (tile.isSuperPellet) {
