@@ -36,7 +36,9 @@ public class InitailMenu : MonoBehaviour
     }
 
     public void GoToGame () {
-        SceneManager.LoadScene(Random.Range(1,2));
+        int scenNumber = Random.Range(1,3);
+        scenNumber = (scenNumber==3)?2:scenNumber;
+        SceneManager.LoadScene(scenNumber);
     }
   
 }

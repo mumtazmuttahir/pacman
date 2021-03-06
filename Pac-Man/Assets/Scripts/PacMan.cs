@@ -307,7 +307,7 @@ public class PacMan : MonoBehaviour {
 							.Find("GameManager")
 							.GetComponent<GameBoardManager>()
 							.gameBoard[(int)_pacmanPosition.x,(int)_pacmanPosition.y];
-
+		
 		if (tile != null) {
 			return tile;
 		}
@@ -324,7 +324,7 @@ public class PacMan : MonoBehaviour {
 			if (tile != null) {
 				if (!tile.isPelletConsumed && (tile.isPellet || tile.isSuperPellet)) {
 
-					pellet.GetComponent<SpriteRenderer>().enabled = false;
+					pellet.GetComponent<Renderer>().enabled = false;
 					tile.isPelletConsumed = true;
 					GameObject.Find("GameManager").GetComponent<GameBoardManager>().ScoreChange(1);
 

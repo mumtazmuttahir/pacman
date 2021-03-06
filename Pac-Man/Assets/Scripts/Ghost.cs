@@ -533,34 +533,34 @@ public class Ghost : MonoBehaviour
         pacManRect = new Rect(pacMan.transform.position, pacMan.transform.GetComponent<Renderer>().bounds.size/4);
 
         int overlap = 0;
-        // if(ghostRect.Overlaps(pacManRect))
-        // {
-        //     // Debug.Log ("Overlaps called"+pacManRect);
+        if(ghostRect.Overlaps(pacManRect))
+        {
+            // Debug.Log ("Overlaps called"+pacManRect);
 
-        //     if (overlap == 0) {
+            if (overlap == 0) {
 
-        //         if (currentMode == Mode.Scared || currentMode == Mode.Consumed) {
-        //             //Ghost gets consumed and goes back to the House
-        //             // Debug.Log ("ghost Scared");
-        //             consumeGhost ();
+                if (currentMode == Mode.Scared || currentMode == Mode.Consumed) {
+                    //Ghost gets consumed and goes back to the House
+                    // Debug.Log ("ghost Scared");
+                    consumeGhost ();
                     
                   
 
-        //         } else {
-        //             //Pacman dies and respawns
-        //             // Debug.Log ("pacman respawned");
-        //             if (currentMode != Mode.Scared) {
-        //                 GameObject.Find("GameManager").
-        //                         GetComponent<GameBoardManager>().
-        //                             StartPacManDeath ();
-        //             }
+                } else {
+                    //Pacman dies and respawns
+                    // Debug.Log ("pacman respawned");
+                    if (currentMode != Mode.Scared) {
+                        GameObject.Find("GameManager").
+                                GetComponent<GameBoardManager>().
+                                    StartPacManDeath ();
+                    }
                     
-        //         }
-        //     }
+                }
+            }
 
-        //     overlap++;
+            overlap++;
             
-        // }
+        }
     }
 
     void consumeGhost () {
